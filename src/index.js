@@ -20,7 +20,7 @@ root.render(
         <Route path="/" element={<Suspense fallback={<div>Loading...</div>}><ReposList /></Suspense>}></Route>
         <Route path=":title" element={<Suspense fallback={<div>Loading...</div>}><Forms /></Suspense>}></Route>
         <Route element={<PrivateRoute />}>
-          <Route path="confirm" element={<Suspense fallback={<div>Loading...</div>}><Confirm/></Suspense>} />
+          <Route path="confirm" element={<Confirm/>} />
         </Route>
       </Routes>
     </Provider>
