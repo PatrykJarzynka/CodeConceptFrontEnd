@@ -10,6 +10,8 @@ import ExistingData from "./ExistingData";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 
+// ---------------------------------STYLE---------------------------------------//
+
 const FancyDiv = styled.div({
   display: "flex",
   flexDirection: "column",
@@ -60,40 +62,42 @@ const FancyButton = styled.button(props => ({
   "&:disabled:hover":{ pointerEvents: "none"}
 }));
 
+//------------------------------------ KOMPONENT -----------------------------//
+
 function Confirm(props) {
-  const email = useSelector(selectEmail);
-  const money = useSelector(selectMoney);
-  const title = useSelector(selectTitle);
+  const email = useSelector(selectEmail); // selektor emaila
+  const money = useSelector(selectMoney);   //selektor pieniędzy
+  const title = useSelector(selectTitle);   //selektor nazwy repo
 
-  const [userId, setId] = useState(null);
-  const [moneyInBase, setMoney] = useState(null)
-  const [isExisting, setExisting] = useState(false);
+  const [userId, setId] = useState(null);     //stan id użytkownika
+  const [moneyInBase, setMoney] = useState(null)    //stan pieniędzy na backu
+  const [isExisting, setExisting] = useState(false);    //stan określający czy dany użytkownik wpłacił uprzednio jakąś kwote na konkretne repo czy też nie
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // nawigacja
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    api.post("/sendData", { email: email, money: money, title: title });
-    navigate("/")
+    api.post("/sendData", { email: email, money: money, title: title });  // wysłanie danych na backend
+    navigate("/") // powrót na stronę główną
   };
 
-  const checkData = async () => {
-    const data = await api.get("/getData");
-    data.data.map((element) => {
-      if (element.email === email && element.title === title) {
+  const checkData = async () => {         // funkcja sprawdzajaca czy dany użytkownik wpłacił uprzednio pieniądze na konkretne repo
+    const data = await api.get("/getData");   // pobranie danych z backu
+    data.data.map((element) => {                  // mapowanie danych z backu
+      if (element.email === email && element.title === title) {   // jeżeli użytkownik, który chce zainwestować jakąś kwote jest już w bazie danych z przypisanym do niego tytułem repo, równym tytuowi na który chce wpłacić, ustawiany jest stan że taki uzytkownik już istnieje
         setExisting(true);
-        setId(element._id)
-        setMoney(element.money)
+        setId(element._id)    // ustawienie id konkretnego użytkownika
+        setMoney(element.money)  // ustawienie pieniędzy, które są aktualnie wpłacone na backu
       }
     });
   };
 
 
-  useEffect(() => {
+  useEffect(() => { // przy pierwszym wejściu na stronę, sprawdzane jest czy użytkownik istnieje już w bazie danych
     checkData();
   }, []);
 
-  const setButton = (e) => {
+  const setButton = (e) => { // funkcja obsługująca wyłączanie i włączanie przycisku w zależności od checkboxa
     const button = document.querySelector(".confirmButton");
     if (e.target.checked) {
       button.removeAttribute("disabled");
@@ -104,9 +108,9 @@ function Confirm(props) {
 
   return (
     <FancyDiv>
-      {isExisting ? (
+      {isExisting ? ( // jeżeli użytkownik istnieje w bazie danych i ma przypisany tytuł, w który chce zainwestować, pojawia się nowy komponent
         <ExistingData isExisting={setExisting} moneyInBase={moneyInBase} userId={userId} />
-      ) : (
+      ) : ( //jeżeli nie, pojawia się podsumownie
         <div>
           <FancyHeader>PODSUMOWANIE:</FancyHeader>
           <FancyInfo>

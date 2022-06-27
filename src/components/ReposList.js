@@ -5,6 +5,8 @@ import { nanoid } from "nanoid";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 
+// ---------------------------------STYLE---------------------------------------//
+
 document.body.style = 'background:  linear-gradient(135deg, rgba(219,8,8,1) 0%, rgba(0,255,214,1) 100%) no-repeat fixed'
 
 const FancyDiv = styled.div({
@@ -57,38 +59,38 @@ const FancyPatronInfo = styled.span({
 })
 const MyLink = newComponent(Link);
 
-let elements = null; // elementy listy
+//------------------------------------ KOMPONENT -----------------------------//
+
+let elements = null; // wszystkie pobrane nazwy repozytoriów
 
 function ReposList(props) {
   const MAX_ELEMENTS = 10; // maksymalna liczba elementów na stronie
 
-  let maxElements = []; // tablica elementów do wyświetlenia o długości MAX_ELEMENTS
+  let maxElements = []; // tablica trzymająca nazwy repozytoriów, skrócona do ilości elementów na stronę, równej MAX_ELEMENTS
 
   const [reposNames, setReposNames] = useState(null); // wyświetlane repozytoria
   const [numberOfButtons, setButtons] = useState(null); // stan przechowujący liczbe przycisków do paginacji
 
   const handlePagination = (event) => {
-    let page = event.target.dataset.id;
-    // obsługa paginacji
-    setNewElements((page - 1) * 10);
-    setReposNames(maxElements);
+    let page = event.target.dataset.id; // rozpoznanie konkretnego przycisku po jego id
+    setNewElements((page - 1) * 10); // paginacja
+    setReposNames(maxElements);   // aktualizacja stanu reposNames
   };
 
   useEffect(() => {
-    const getReposNames = async () => {
-      // pobranie danych z github api
-      const reposAndUsers = await api.get("/");
+    const getReposNames = async () => {     // funkcja pobierająca dane z API przy stworzeniu komponentu
+      const reposAndUsers = await api.get("/");       
       const { reposNames, data } = reposAndUsers.data;
-      elements = reposNames.map((element) => {
-        const foundUser = data.filter((user) => user.title === element);
-        const userInfo = foundUser.map((element) => (
+      elements = reposNames.map((element) => {                            // mapowanie wyników pobranych danych
+        const foundUser = data.filter((user) => user.title === element);    // sprawdzenie czy repozytorium o danej nazwie znajduje się już w bazie patronów
+        const userInfo = foundUser.map((element) => (                       // jeżeli tak, do zmiennej userInfo trafiają informacje odnośnie danego patrona
           <FancyPatronContainter key={nanoid()}>
             <FancyTitle>Patron:</FancyTitle>
             <p>Email: <FancyPatronInfo>{element.email}</FancyPatronInfo></p>
             <p>Kwota: <FancyPatronInfo>{element.money} PLN</FancyPatronInfo></p>
           </FancyPatronContainter>
         ));
-        if (foundUser) {
+        if (foundUser) {                // jeżeli patron został znaleziony, zwracana jest element listy wzbogacony o informacje o patronie
           return (
             <li key={nanoid()}>
               {
@@ -100,7 +102,7 @@ function ReposList(props) {
               }
             </li>
           );
-        } else {
+        } else {                // jeżeli nie, zwracany jest zwyczajny element listy
           return (
             <li key={nanoid()}>
               {<MyLink to={`/${element}`}>{element}</MyLink>}
@@ -109,16 +111,14 @@ function ReposList(props) {
         }
       });
     };
-    // wyświetlenie danych po wejściu na strone
     getReposNames().then((response) => {
-      setNewElements(0);
+      setNewElements(0);                // przy pierwszym stworzeniu komponentu wyświetlane są elementy z pierwszej strony
       setReposNames(maxElements);
-      setButtons(elements.length / MAX_ELEMENTS);
+      setButtons(elements.length / MAX_ELEMENTS); // obsługa ilości przycisków wyświetlanych na ekranie w zależności od ilości elementów zwracanych na backu oraz maksymalnej ilości, która może się pojawić na ekranie
     });
   }, []);
 
-  const setNewElements = (page) => {
-    // paginacja
+  const setNewElements = (page) => {      // obsługa paginacji
     let i = 0;
     for (i = page; i < page + MAX_ELEMENTS; i++) {
       maxElements.push(elements[i]); // wybieranie poszczególnych elementów do wyświetlenia

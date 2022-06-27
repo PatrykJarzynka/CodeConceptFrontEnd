@@ -4,6 +4,8 @@ import { useDispatch } from "react-redux";
 import { saveData } from "../features/slices/reposSlice";
 import styled from "@emotion/styled";
 
+// ---------------------------------STYLE---------------------------------------//
+
 const FancyDiv = styled.div({
   display: "flex",
   justifyContent: "center",
@@ -48,15 +50,15 @@ const FancyButton = styled.button({
   "&:hover": { backgroundColor: "rgb(66, 227, 245)", color: "white" },
 });
 
-
+//------------------------------------ KOMPONENT -----------------------------//
 
 function Forms(props) {
-  const [email, setEmail] = useState("");
-  const [money, setMoney] = useState(0);
+  const [email, setEmail] = useState("");   // stan emaila
+  const [money, setMoney] = useState(0);    //stan pieniędzy
 
-  const params = useParams();
-  let navigate = useNavigate();
-  const dispatch = useDispatch();
+  const params = useParams();   //odczyt konkretnej nazwy repo z linku
+  let navigate = useNavigate(); //nawigacja po stronie
+  const dispatch = useDispatch(); //obsługa akcji z reduxa
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);

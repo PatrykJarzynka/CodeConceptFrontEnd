@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import styled from "@emotion/styled";
-import { produceWithPatches } from "immer";
+
+// ---------------------------------STYLE---------------------------------------//
 
 const FancyButtonWrapper = styled.div({
   marginTop: "30px",
@@ -50,12 +51,14 @@ const FancyValue = styled.span({
   color: "white"
 })
 
-function ExistingData({ moneyInBase, userId }) {
-  const [changedValue, setChange] = useState(null);
-  const [newValue, setValue] = useState(null);
-  const [edit, setEdit] = useState(false);
+//------------------------------------ KOMPONENT -----------------------------//
 
-  let navigate = useNavigate();
+function ExistingData({ moneyInBase, userId }) {
+  const [changedValue, setChange] = useState(null); // stan, który przechowuje informacje o zmienionej kwocie na backendzie
+  const [newValue, setValue] = useState(null);      // stan przechowujący informacje o nowej kwocie do zmiany
+  const [edit, setEdit] = useState(false);    // stan decydujacy czy wyświetlony ma zostać input do wprowadzania zmiany kwoty 
+
+  let navigate = useNavigate();   //nawigacja
 
   const handleEdit = () => {
     setEdit(true);
@@ -66,13 +69,13 @@ function ExistingData({ moneyInBase, userId }) {
   };
 
   const handleClick = async () => {
-    await api.patch("/patchData", { money: newValue, _id: userId });
-    const data = await api.get("/getData");
-    const user = data.data.find((element) => element._id === userId);
-    setChange(user.money);
+    await api.patch("/patchData", { money: newValue, _id: userId });    // aktualizacja danych na bakcu
+    const data = await api.get("/getData");                             // pobranie zaktualizowanych danych
+    const user = data.data.find((element) => element._id === userId);   // znalezienie konkretnego patrona 
+    setChange(user.money);                                              // aktualizacja stanu wyświetlanych pieniędzy na stronie
   };
 
-  const handleBack = () => {
+  const handleBack = () => {    // powrót na stronę główną
     navigate("/");
   };
 
